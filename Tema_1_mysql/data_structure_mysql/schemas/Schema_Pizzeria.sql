@@ -1,92 +1,93 @@
 CREATE DATABASE pizzeria;
 USE pizzeria;
 
-
-CREATE TABLE Client (
-    ID_Client INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(50) NOT NULL,
-    Cognom1 VARCHAR(50) NOT NULL,
-     Cognom2 VARCHAR(50)  NULL,
-    Adreça VARCHAR(250) NOT NULL,
-    Codi_Postal VARCHAR(20) NOT NULL,
-    Localitat VARCHAR(50) NOT NULL,
-    Provincia VARCHAR(50) NOT NULL,
-    Telefono VARCHAR(20) NOT NULL
+-- Client table
+CREATE TABLE client (
+    id_client INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    cognom1 VARCHAR(50) NOT NULL,
+    cognom2 VARCHAR(50) NULL,
+    adreca VARCHAR(250) NOT NULL,
+    codi_postal VARCHAR(20) NOT NULL,
+    localitat VARCHAR(50) NOT NULL,
+    provincia VARCHAR(50) NOT NULL,
+    telefono VARCHAR(20) NOT NULL
 );
 
+
 -- restaurant table 
-CREATE TABLE Botiga (
-    ID_Botiga INT AUTO_INCREMENT PRIMARY KEY,
-    Adreça VARCHAR(255) NOT NULL,
-    Codi_Postal VARCHAR(10) NOT NULL,
-    Localitat VARCHAR(50) NOT NULL,
-    Provincia VARCHAR(50) NOT NULL
+CREATE TABLE botiga (
+    id_botiga INT AUTO_INCREMENT PRIMARY KEY,
+    adreca VARCHAR(255) NOT NULL,
+    codi_postal VARCHAR(10) NOT NULL,
+    localitat VARCHAR(50) NOT NULL,
+    provincia VARCHAR(50) NOT NULL
 );
 
 -- employee table
 CREATE TABLE Empleat (
-    ID_Empleat INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(50) NOT NULL,
-    Cognoms VARCHAR(50) NOT NULL,
-    NIF VARCHAR(20) NOT NULL,
-    Telefon VARCHAR(15) NOT NULL,
-    Rol ENUM("cook", "Repartidor") NOT NULL,
-    ID_Botiga INT NOT NULL,
-    FOREIGN KEY (ID_Botiga) REFERENCES Botiga(ID_Botiga)
+    id_empleat INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    cognoms VARCHAR(50) NOT NULL,
+    nif VARCHAR(20) NOT NULL,
+    telefon VARCHAR(15) NOT NULL,
+    rol ENUM("cook", "repartidor") NOT NULL,
+    id_botiga INT NOT NULL,
+    FOREIGN KEY (id_botiga) REFERENCES botiga(id_botiga)
 );
+
 
 -- order table
 CREATE TABLE Comanda (
-    ID_Comanda INT AUTO_INCREMENT PRIMARY KEY,
-    Data_Hora DATETIME NOT NULL,
-    Tipus ENUM("Delivery", "takeAway") NOT NULL,
-    Quantitat_Productes INT NOT NULL,
-    Preu_Total DECIMAL(10, 2) NOT NULL,
-    ID_Client INT NOT NULL,
-    ID_Botiga INT NOT NULL,
-    ID_Empleat INT,
-    Data_Hora_Lliurament DATETIME,
-    FOREIGN KEY (ID_Client) REFERENCES Client(ID_Client),
-    FOREIGN KEY (ID_Botiga) REFERENCES Botiga(ID_Botiga),
-    FOREIGN KEY (ID_Empleat) REFERENCES Empleat(ID_Empleat)
+    id_comanda INT AUTO_INCREMENT PRIMARY KEY,
+    data_hora DATETIME NOT NULL,
+    tipus ENUM("delivery", "takeaway") NOT NULL,
+    quantitat_productes INT NOT NULL,
+    preu_total DECIMAL(10, 2) NOT NULL,
+    id_client INT NOT NULL,
+    id_botiga INT NOT NULL,
+    id_empleat INT,
+    data_hora_lliurament DATETIME,
+    FOREIGN KEY (id_client) REFERENCES client(id_client),
+    FOREIGN KEY (id_botiga) REFERENCES botiga(id_botiga),
+    FOREIGN KEY (id_empleat) REFERENCES empleat(id_empleat)
 );
 
-
+-- //added an enum of produc types on the producte table
 CREATE TABLE Producte (
-    ID_Producte INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(50) NOT NULL,
-    Descripcio TEXT NOT NULL,
-    Imatje VARCHAR(255),
-    Preu DECIMAL(10, 2) NOT NULL
+    id_producte INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    descripcio TEXT NOT NULL,
+    imatge VARCHAR(255),
+    preu DECIMAL(10, 2) NOT NULL,
+    tipus ENUM('pizzas', 'bebidas', 'postres', 'acompanants') NOT NULL
 );
-
 
 CREATE TABLE Pizza_Categoria (
-    ID_Categoria INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(50) NOT NULL
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL
 );
 
 
+-- //adjusted a product type(id_producte)  to my pizza
 CREATE TABLE Pizza (
-    ID_Pizza INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(50) NOT NULL,
-    Descripcio TEXT NOT NULL,
-    Imatge VARCHAR(255),
-    Preu DECIMAL(10, 2) NOT NULL,
-    ID_Categoria INT NOT NULL,
-    FOREIGN KEY (ID_Categoria) REFERENCES Pizza_Categoria(ID_Categoria)
+    id_pizza INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    descripcio TEXT NOT NULL,
+    imatge VARCHAR(255),
+    preu DECIMAL(10, 2) NOT NULL,
+    id_categoria INT NOT NULL,
+    id_producte INT NOT NULL,
+    FOREIGN KEY (id_categoria) REFERENCES pizza_categoria(id_categoria),
+    FOREIGN KEY (id_producte) REFERENCES producte(id_producte) 
 );
 
-
-
+-- //connects the commanda (orders) and products(producte)
 CREATE TABLE Comanda_Producte (
-    ID_Comanda INT NOT NULL,
-    ID_Producte INT NOT NULL,
-    Quantitat INT NOT NULL,
-    PRIMARY KEY (ID_Comanda, ID_Producte),
-    FOREIGN KEY (ID_Comanda) REFERENCES Comanda(ID_Comanda),
-    FOREIGN KEY (ID_Producte) REFERENCES Producte(ID_Producte)
+    id_comanda INT NOT NULL,
+    id_producte INT NOT NULL,
+    quantitat INT NOT NULL,
+    PRIMARY KEY (id_comanda, id_producte),
+    FOREIGN KEY (id_comanda) REFERENCES comanda(id_comanda),
+    FOREIGN KEY (id_producte) REFERENCES producte(id_producte)
 );
-
-
--- many-to-many relationship between orders and products and Comanda_Producte table

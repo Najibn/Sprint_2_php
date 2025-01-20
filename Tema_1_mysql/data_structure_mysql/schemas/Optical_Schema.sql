@@ -4,69 +4,76 @@ USE Cul_d_Ampolla;
 
 
 -- //tables supplier.
-CREATE TABLE Proveedor (
-    ID_Proveedor INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Direccion_Calle VARCHAR(100),
-    Direccion_Numero VARCHAR(100),
-    Direccion_Piso VARCHAR(100),
-    Direccion_Puerta VARCHAR(100),
-    Direccion_Ciudad VARCHAR(500),
-    Direccion_Codigo_Postal VARCHAR(20),
-    Direccion_Pais VARCHAR(50),
-    Telefono VARCHAR(20)NOT NULL,
-    Fax VARCHAR(20),
-    NIF VARCHAR(25) NOT NULL
+CREATE TABLE proveedor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    calle VARCHAR(100),
+    numero VARCHAR(100),
+    piso VARCHAR(100),
+    puerta VARCHAR(100),
+    ciudad VARCHAR(500),
+    codigo_postal VARCHAR(20),
+    pais VARCHAR(50),
+    telefono VARCHAR(20) NOT NULL,
+    fax VARCHAR(20),
+    nif VARCHAR(25) NOT NULL
+);
+-- product table glasses (adjusted with fk ID_Marca)
+CREATE TABLE ulleres (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_marca INT NOT NULL,
+    graduacion_izquierda DECIMAL(4,2),
+    graduacion_derecha DECIMAL(4,2),
+    tipo_montura ENUM("Floating", "Pasta", "Metallica") NOT NULL,
+    color_montura VARCHAR(30),
+    color_vidrio_izquierdo VARCHAR(30),
+    color_vidrio_derecho VARCHAR(30),
+    precio DECIMAL(9,2) NOT NULL,
+    FOREIGN KEY (id_marca) REFERENCES Marca(id)
 );
 
--- product table 
-CREATE TABLE Ulleres (
-    ID_Ulleres INT AUTO_INCREMENT PRIMARY KEY,
-    Marca VARCHAR(50) NOT NULL,
-    Graduacion_Dret_Esquerre DECIMAL(4,2),
-    Tipo_Montura ENUM("Floating", "Pasta", "Metallica") NOT NULL,
-    Color_Montura VARCHAR(30),
-    Color_Vidre_Derecho VARCHAR(30),
-    Color_Vidre_Izquierdo VARCHAR(30),
-    Precio DECIMAL(9,2) NOT NULL,
-    ID_Proveedor INT NOT NULL,
-    FOREIGN KEY (ID_Proveedor) REFERENCES Proveedor(ID_Proveedor)
+-- brand table (added table for strict branding to a supplier(ID_Proveedor) )
+CREATE TABLE marca (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_proveedor INT NOT NULL,
+    FOREIGN KEY (id_proveedor) REFERENCES proveedor(id)
 );
 
--- customers table
-CREATE TABLE Client (
-    ID_Client INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(150) NOT NULL,
-    Apellido_1 VARCHAR(30) NOT NULL,
-    Apellido_2 VARCHAR(30)NULL,
-    Direccion VARCHAR(250),
-    Telefono VARCHAR(20),
-    Correo VARCHAR(170),
-    Fecha_Registro DATE NOT NULL,
-    Recomendado_Por INT,
-    FOREIGN KEY (Recomendado_Por) REFERENCES Client(ID_Client)
-);
-
-
-
-CREATE TABLE Empleado (
-    ID_Empleado INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(200) NOT NULL,
-    Apellido VARCHAR(150) NOT NULL,
-    Apellido_2 VARCHAR(30)NULL,
-    Telefono VARCHAR(20)NOT NULL,
-    Correo VARCHAR(100)NOT NULL,
-     Direccion VARCHAR(250)
+-- customers table (maintained apellido repetion)
+CREATE TABLE client (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    apellido_1 VARCHAR(30) NOT NULL,
+    apellido_2 VARCHAR(30) NULL,
+    direccion VARCHAR(250),
+    telefono VARCHAR(20),
+    correo VARCHAR(170),
+    fecha_registro DATE NOT NULL,
+    recomendado_por INT,
+    FOREIGN KEY (recomendado_por) REFERENCES client(id)
 );
 
 
-CREATE TABLE Venta (
-    ID_Venta INT AUTO_INCREMENT PRIMARY KEY,
-    Fecha DATE NOT NULL,
-    ID_Ulleres INT NOT NULL,
-    ID_Client INT NOT NULL,
-    ID_Empleado INT NOT NULL,
-    FOREIGN KEY (ID_Ulleres) REFERENCES Ulleres(ID_Ulleres),
-    FOREIGN KEY (ID_Client) REFERENCES Client(ID_Client),
-    FOREIGN KEY (ID_Empleado) REFERENCES Empleado(ID_Empleado)
+-- //employee table
+CREATE TABLE empleado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(200) NOT NULL,
+    apellido_1 VARCHAR(150) NOT NULL,
+    apellido_2 VARCHAR(30) NULL,
+    telefono VARCHAR(20) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    direccion VARCHAR(250)
+);
+
+-- //sales table
+CREATE TABLE venta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    id_ulleres INT NOT NULL,
+    id_client  INT NOT NULL,
+    id_empleado INT NOT NULL,
+    FOREIGN KEY (id_ulleres)  REFERENCES ulleres(id),
+    FOREIGN KEY (id_client)   REFERENCES client(id),
+    FOREIGN KEY (id_empleado) REFERENCES empleado(id)
 );
