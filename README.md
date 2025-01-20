@@ -8,5 +8,5 @@ Contains all exercises of this sprint.
 linking each brand to a single supplier(proveedor).
 
 pizzeria:
-added product type => enumTipus
+added product type => enumTipus.
 linking pizza category to product type. etc
